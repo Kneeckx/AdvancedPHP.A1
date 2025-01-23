@@ -64,13 +64,12 @@ function wp_volunteer_adminpage_html() {
     <?php
 }
 
-
 function wp_volunteer_adminpage() {
     add_menu_page(
-    'Events',
-    'Events',
+    'Volunteer Opportunities',
+    'Volunteeer Opportunities',
     'manage_options',
-    'events',
+    'volunteer',
     'wp_volunteer_adminpage_html',
     '', // could give a custom icon here
     20
