@@ -45,87 +45,134 @@ function wp_volunteer_adminpage_html() {
         return;
     }
     handle_form();
-    handle_update_form()
+    handle_update_form();
+    handle_delete_form();
     ?>
-    <div class="wrap">
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 10px;
+        }
+        .container form {
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid black;
+            border-radius: 10px;
+            text-align: right;
+            justify-content: center;
+        }
+        .container label {
+            font-weight: bold;
+        }
+        .title-label {
+            font-size: 20px;
+            font-weight: bold;
+            font-style: italic;
+            padding: 10px;
+        }
+        .input {
+            margin: 2px;
+            border-radius: 5px;
+            width: 300px;
+        }
+    </style>
+
+    <div class="container">
     <h1><?php esc_html( get_admin_page_title() ); ?></h1>
     <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
     method="post">
-    <label for="create">CREATE</label>
+    <label for="create" class="title-label">CREATE</label>
     <br>
     <label for="position">Position</label>
-    <input type="text" name="position">
+    <input type="text" name="position" class="input">
     <br>
     <label for="organization">Organization</label>
-    <input type="text" name="organization">
+    <input type="text" name="organization" class="input">
     <br>
     <label for="type">Job Type</label>
-    <select name="type">
+    <select name="type" class="select">
         <option value="one-time">One-time</option>
         <option value="recurring">Recurring</option>
         <option value="seasonal">Seasonal</option>
     </select>
     <br>
     <label for="email">E-mail</label>
-    <input type="email" name="email">
+    <input type="email" name="email" class="input">
     <br>
     <label for="description">Description</label>
-    <textarea name="description"></textarea>
+    <textarea name="description" class="input"></textarea>
     <br>
     <label for="location">Location</label>
-    <input type="text" name="location">
+    <input type="text" name="location" class="input">
     <br>
     <label for="hours">Hours</label>
-    <input type="number" name="hours">
+    <input type="number" name="hours" class="input">
     <br>
     <label for="skills">Skills Required</label>
-    <textarea name="skills"></textarea>
+    <textarea name="skills" class="input"></textarea>
     <br>
     <input type="submit" name="submit">
     <br>
     </form>
     </div>
 
-    <div class="wrap">
-    <label for="update">UPDATE</label>
-
+    <div class="container">
     <h1><?php esc_html( get_admin_page_title() ); ?></h1>
     <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
     method="post">
+    <label for="update" class="title-label">UPDATE</label>
+    <br>
     <label for="volunteer-id">Volunteer ID</label>
-    <input type="number" name="volunteer-id">
+    <input type="number" name="volunteer-id" class="input">
     <br>
     <label for="position-up">Position</label>
-    <input type="text" name="position-up">
+    <input type="text" name="position-up" class="input">
     <br>
     <label for="organization-up">Organization</label>
-    <input type="text" name="organization-up">
+    <input type="text" name="organization-up" class="input">
     <br>
     <label for="type-up">Job Type</label>
-    <select name="type-up">
+    <select name="type-up" class="select">
         <option value="one-time">One-time</option>
         <option value="recurring">Recurring</option>
         <option value="seasonal">Seasonal</option>
     </select>
     <br>
     <label for="email-up">E-mail</label>
-    <input type="email" name="email-up">
+    <input type="email" name="email-up" class="input">
     <br>
     <label for="description-up">Description</label>
-    <textarea name="description-up"></textarea>
+    <textarea name="description-up" class="input"></textarea>
     <br>
     <label for="location-up">Location</label>
-    <input type="text" name="location-up">
+    <input type="text" name="location-up" class="input">
     <br>
     <label for="hours-up">Hours</label>
-    <input type="number" name="hours-up">
+    <input type="number" name="hours-up" class="input">
     <br>
     <label for="skills-up">Skills Required</label>
-    <textarea name="skills-up"></textarea>
+    <textarea name="skills-up" class="input"></textarea>
     <br>
     <input type="submit" name="submit-update">
     <br>
     </form>
+    </div>
+    
+    <div class="container">
+    <h1><?php esc_html( get_admin_page_title() ); ?></h1>
+    <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
+    method="post">
+    <label for="update" class="title-label">DELETE</label>
+    <br>
+    <label for="delete-volunteer-id">Volunteer ID</label>
+    <input type="number" name="delete-volunteer-id" class="input">
+    <br>  
+    <input type="submit" name="delete-button" value="Delete">
+    </div>
+
+    <div class="container">
     <p><a href="<?php admin_url('options-
     general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
     action</a></p>
@@ -147,7 +194,22 @@ function handle_form(){
         $description = $_POST['description'];
         $skills = $_POST['skills'];
 
-        $wpdb->query("INSERT INTO VolunteerInfo (Position, Organization, Type, Email, Description, Location, Hours, SkillsRequired) VALUES ('$position', '$organization', '$type', '$email', '$description', '$location', '$hours', '$skills');");
+        $wpdb->query("INSERT INTO VolunteerInfo (Position, 
+                                                 Organization, 
+                                                 Type, 
+                                                 Email,
+                                                 Description, 
+                                                 Location, 
+                                                 Hours, 
+                                                 SkillsRequired) 
+                      VALUES ('$position',
+                              '$organization', 
+                              '$type', 
+                              '$email', 
+                              '$description', 
+                              '$location', 
+                              '$hours', 
+                              '$skills');");
     }
 }
 
@@ -177,8 +239,13 @@ function handle_update_form(){
     }
 }
 
-
-
+function handle_delete_form(){
+    if(isset($_POST['delete-button'])){
+        global $wpdb;
+        $volunteerID = $_POST['delete-volunteer-id'];
+        $wpdb->query("DELETE FROM VolunteerInfo WHERE VolunteerID='$volunteerID';");
+    }
+}
 
 function wp_volunteer_adminpage() {
     add_menu_page(
