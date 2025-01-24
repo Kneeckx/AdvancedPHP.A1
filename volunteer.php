@@ -41,9 +41,10 @@ add_shortcode('volunteer', 'wporg_shortcode');
 
 function wp_volunteer_adminpage_html() {
     // check user capabilities
-    if ( ! current_user_can( 'manage_options' ) ) {
-    return;
+    if ( !current_user_can( 'manage_options' ) ) {
+        return;
     }
+    handle_form();
     ?>
     <div class="wrap">
     <h1><?php esc_html( get_admin_page_title() ); ?></h1>
@@ -77,7 +78,7 @@ function wp_volunteer_adminpage_html() {
     <label for="skills">Skills Required</label>
     <textarea name="skills"></textarea>
     <br>
-    <input type="submit">
+    <input type="submit" name="submit">
     </form>
     <p><a href="<?php admin_url('options-
     general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
