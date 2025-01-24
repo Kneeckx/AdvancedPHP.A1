@@ -45,11 +45,14 @@ function wp_volunteer_adminpage_html() {
         return;
     }
     handle_form();
+    handle_update_form()
     ?>
     <div class="wrap">
     <h1><?php esc_html( get_admin_page_title() ); ?></h1>
     <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
     method="post">
+    <label for="create">CREATE</label>
+    <br>
     <label for="position">Position</label>
     <input type="text" name="position">
     <br>
@@ -79,6 +82,49 @@ function wp_volunteer_adminpage_html() {
     <textarea name="skills"></textarea>
     <br>
     <input type="submit" name="submit">
+    <br>
+    </form>
+    </div>
+
+    <div class="wrap">
+    <label for="update">UPDATE</label>
+
+    <h1><?php esc_html( get_admin_page_title() ); ?></h1>
+    <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
+    method="post">
+    <label for="volunteer-id">Volunteer ID</label>
+    <input type="number" name="volunteer-id">
+    <br>
+    <label for="position-up">Position</label>
+    <input type="text" name="position-up">
+    <br>
+    <label for="organization-up">Organization</label>
+    <input type="text" name="organization-up">
+    <br>
+    <label for="type-up">Job Type</label>
+    <select name="type-up">
+        <option value="one-time">One-time</option>
+        <option value="recurring">Recurring</option>
+        <option value="seasonal">Seasonal</option>
+    </select>
+    <br>
+    <label for="email-up">E-mail</label>
+    <input type="email" name="email-up">
+    <br>
+    <label for="description-up">Description</label>
+    <textarea name="description-up"></textarea>
+    <br>
+    <label for="location-up">Location</label>
+    <input type="text" name="location-up">
+    <br>
+    <label for="hours-up">Hours</label>
+    <input type="number" name="hours-up">
+    <br>
+    <label for="skills-up">Skills Required</label>
+    <textarea name="skills-up"></textarea>
+    <br>
+    <input type="submit" name="submit-update">
+    <br>
     </form>
     <p><a href="<?php admin_url('options-
     general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
@@ -105,11 +151,39 @@ function handle_form(){
     }
 }
 
+function handle_update_form(){
+    if(isset($_POST['submit-update'])){
+        global $wpdb;
+        $volunteerID = $_POST['volunteer-id'];
+        $position = $_POST['position-up'];
+        $organization = $_POST['organization-up'];
+        $type = $_POST['type-up'];
+        $email = $_POST['email-up'];
+        $location = $_POST['location-up'];
+        $hours = $_POST['hours-up'];
+        $description = $_POST['description-up'];
+        $skills = $_POST['skills-up'];
+
+        $wpdb->query("UPDATE VolunteerInfo 
+                      SET Position='$position', 
+                          Organization='$organization', 
+                          Type='$type', 
+                          Email='$email', 
+                          Description='$description', 
+                          Location='$location', 
+                          Hours='$hours', 
+                          SkillsRequired='$skills'
+                      WHERE VolunteerID='$volunteerID';"); 
+    }
+}
+
+
+
 
 function wp_volunteer_adminpage() {
     add_menu_page(
     'Volunteer',
-    'Volunteeer',
+    'Volunteer',
     'manage_options',
     'volunteer',
     'wp_volunteer_adminpage_html',
