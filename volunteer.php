@@ -19,8 +19,6 @@ function myplugin_activate() {
     SkillsRequired varchar(255),
     PRIMARY KEY(VolunteerID)
     );");
-    $wpdb->query("INSERT INTO VolunteerInfo (Position, Organization, Type, Email, Description, Location, Hours, SkillsRequired) VALUES ('Coffee Break', 'Org1', 'Type1', 'coffee@example.com', 'Desc1', 'Location1', 'Hours1', 'Skills1');");
-    $wpdb->query("INSERT INTO VolunteerInfo (Position, Organization, Type, Email, Description, Location, Hours, SkillsRequired) VALUES ('Pizza Lunch', 'Org2', 'Type2', 'pizza@example.com', 'Desc2', 'Location2', 'Hours2', 'Skills2');");
 }
 register_activation_hook( __FILE__, 'myplugin_activate' );
 
@@ -90,6 +88,22 @@ function wp_volunteer_adminpage_html() {
     <?php
 }
 
+function handle_form(){
+    if(isset($_POST['submit'])){
+        global $wpdb;
+        $position = $_POST['position'];
+        $organization = $_POST['organization'];
+        $type = $_POST['type'];
+        $email = $_POST['email'];
+        $location = $_POST['location'];
+        $hours = $_POST['hours'];
+        $description = $_POST['description'];
+        $skills = $_POST['skills'];
+
+        $wpdb->query("INSERT INTO VolunteerInfo (Position, Organization, Type, Email, Description, Location, Hours, SkillsRequired) VALUES ('$position', '$organization', '$type', '$email', '$description', '$location', '$hours', '$skills');");
+    }
+}
+
 
 function wp_volunteer_adminpage() {
     add_menu_page(
@@ -98,7 +112,6 @@ function wp_volunteer_adminpage() {
     'manage_options',
     'volunteer',
     'wp_volunteer_adminpage_html',
-    '', // could give a custom icon here
     20
     );
 }
