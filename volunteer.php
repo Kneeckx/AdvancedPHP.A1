@@ -53,14 +53,32 @@ function wp_volunteer_adminpage_html() {
     method="post">
     <label for="position">Position</label>
     <input type="text" name="position">
+    <br>
+    <label for="organization">Organization</label>
     <input type="text" name="organization">
+    <br>
+    <label for="type">Job Type</label>
     <select name="type">
         <option value="one-time">One-time</option>
         <option value="recurring">Recurring</option>
         <option value="seasonal">Seasonal</option>
+    </select>
+    <br>
+    <label for="email">E-mail</label>
     <input type="email" name="email">
+    <br>
+    <label for="description">Description</label>
     <textarea name="description"></textarea>
-    
+    <br>
+    <label for="location">Location</label>
+    <input type="text" name="location">
+    <br>
+    <label for="hours">Hours</label>
+    <input type="number" name="hours">
+    <br>
+    <label for="skills">Skills Required</label>
+    <textarea name="skills"></textarea>
+    <br>
     <input type="submit">
     </form>
     <p><a href="<?php admin_url('options-
