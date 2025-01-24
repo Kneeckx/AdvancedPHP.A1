@@ -51,8 +51,16 @@ function wp_volunteer_adminpage_html() {
     <h1><?php esc_html( get_admin_page_title() ); ?></h1>
     <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
     method="post">
-    <label for="someinput">Some Input</label>
-    <input type="text" name="someinput">
+    <label for="position">Position</label>
+    <input type="text" name="position">
+    <input type="text" name="organization">
+    <select name="type">
+        <option value="one-time">One-time</option>
+        <option value="recurring">Recurring</option>
+        <option value="seasonal">Seasonal</option>
+    <input type="email" name="email">
+    <textarea name="description"></textarea>
+    
     <input type="submit">
     </form>
     <p><a href="<?php admin_url('options-
@@ -64,10 +72,11 @@ function wp_volunteer_adminpage_html() {
     <?php
 }
 
+
 function wp_volunteer_adminpage() {
     add_menu_page(
-    'Volunteer Opportunities',
-    'Volunteeer Opportunities',
+    'Volunteer',
+    'Volunteeer',
     'manage_options',
     'volunteer',
     'wp_volunteer_adminpage_html',
