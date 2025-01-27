@@ -52,6 +52,9 @@ function wporg_shortcode($atts = [], $content = null){
     $params = array();
     foreach($atts as $attribute => $value){
         if(!empty($value)){
+            if($attribute == 'hours'){
+                $query_call .= " AND $attribute <= %d";
+            } else
             $query_call .= " AND $attribute = %s";
             $params[] = $value;
         }
