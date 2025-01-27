@@ -32,9 +32,56 @@ register_deactivation_hook( __FILE__, 'myplugin_deactivate' );
 
 function wporg_shortcode($atts = [], $content = null){
     global $wpdb;
-    $query = $wpdb->prepare("SELECT NAME FROM VolunteerInfo WHERE VolunteerID=%d", $atts[0]);
+    $atts = shortcode_atts(
+        array(
+            'volunteerid' => '',
+            'position' => '',
+            'organization' => '',
+            'type' => '',
+            'email' => '',
+            'description' => '',
+            'location' => '',
+            'hours' => '',
+            'skillsrequired' => ''
+        ),
+        $atts,
+        'volunteer'
+    );
+
+    $query_call = "SELECT * FROM VolunteerInfo WHERE 1=1";
+    $params = array();
+    foreach($atts as $attribute => $value){
+        if(!empty($value)){
+            $query_call .= " AND $attribute = %s";
+            $params[] = $value;
+        }
+    }
+    $query = $wpdb -> prepare($query_call, $params);
     $results = $wpdb->get_results($query);
-    return ($results[0]->NAME);
+
+    if (!empty($results)) {
+        // Generate the HTML table
+        $output = '<table>';
+        $output .= '<tr><th>Volunteer ID</th><th>Position</th><th>Organization</th><th>Type</th><th>Email</th><th>Description</th><th>Location</th><th>Hours</th><th>Skills Required</th></tr>';
+        foreach ($results as $row) {
+            $output .= '<tr>';
+            $output .= '<td>' . esc_html($row->VolunteerID) . '</td>';
+            $output .= '<td>' . esc_html($row->Position) . '</td>';
+            $output .= '<td>' . esc_html($row->Organization) . '</td>';
+            $output .= '<td>' . esc_html($row->Type) . '</td>';
+            $output .= '<td>' . esc_html($row->Email) . '</td>';
+            $output .= '<td>' . esc_html($row->Description) . '</td>';
+            $output .= '<td>' . esc_html($row->Location) . '</td>';
+            $output .= '<td>' . esc_html($row->Hours) . '</td>';
+            $output .= '<td>' . esc_html($row->SkillsRequired) . '</td>';
+            $output .= '</tr>';
+        }
+        $output .= '</table>';
+
+        return $output;
+    } else {
+        return "No volunteers found.";
+    }
 }
 add_shortcode('volunteer', 'wporg_shortcode');
 
@@ -49,6 +96,11 @@ function wp_volunteer_adminpage_html() {
     handle_delete_form();
     ?>
     <style>
+        .main-contain {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            
+        }
         .container {
             display: flex;
             align-items: center;
@@ -66,6 +118,11 @@ function wp_volunteer_adminpage_html() {
         .container label {
             font-weight: bold;
         }
+        .view-contain {
+            padding: 10px;
+            margin: 10px;
+            justify-content: center;
+        }
         .title-label {
             font-size: 20px;
             font-weight: bold;
@@ -77,107 +134,115 @@ function wp_volunteer_adminpage_html() {
             border-radius: 5px;
             width: 300px;
         }
+        .select {
+            margin: 2px;
+            border-radius: 5px;
+            width: 300px;
+        }
     </style>
+    <div class="main-contain">
+        <div class="group-contain">
+            <div class="container">
+                <h1><?php esc_html( get_admin_page_title() ); ?></h1>
+                <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
+                method="post">
+                    <label for="create" class="title-label">CREATE</label>
+                    <br>
+                    <label for="position">Position</label>
+                    <input type="text" name="position" class="input">
+                    <br>
+                    <label for="organization">Organization</label>
+                    <input type="text" name="organization" class="input">
+                    <br>
+                    <label for="type">Job Type</label>
+                    <select name="type" class="select">
+                        <option value="one-time">One-time</option>
+                        <option value="recurring">Recurring</option>
+                        <option value="seasonal">Seasonal</option>
+                    </select>
+                    <br>
+                    <label for="email">E-mail</label>
+                    <input type="email" name="email" class="input">
+                    <br>
+                    <label for="description">Description</label>
+                    <textarea name="description" class="input"></textarea>
+                    <br>
+                    <label for="location">Location</label>
+                    <input type="text" name="location" class="input">
+                    <br>
+                    <label for="hours">Hours</label>
+                    <input type="number" name="hours" class="input">
+                    <br>
+                    <label for="skills">Skills Required</label>
+                    <textarea name="skills" class="input"></textarea>
+                    <br>
+                    <input type="submit" name="submit">
+                    <br>
+                </form>
+            </div>
 
-    <div class="container">
-    <h1><?php esc_html( get_admin_page_title() ); ?></h1>
-    <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
-    method="post">
-    <label for="create" class="title-label">CREATE</label>
-    <br>
-    <label for="position">Position</label>
-    <input type="text" name="position" class="input">
-    <br>
-    <label for="organization">Organization</label>
-    <input type="text" name="organization" class="input">
-    <br>
-    <label for="type">Job Type</label>
-    <select name="type" class="select">
-        <option value="one-time">One-time</option>
-        <option value="recurring">Recurring</option>
-        <option value="seasonal">Seasonal</option>
-    </select>
-    <br>
-    <label for="email">E-mail</label>
-    <input type="email" name="email" class="input">
-    <br>
-    <label for="description">Description</label>
-    <textarea name="description" class="input"></textarea>
-    <br>
-    <label for="location">Location</label>
-    <input type="text" name="location" class="input">
-    <br>
-    <label for="hours">Hours</label>
-    <input type="number" name="hours" class="input">
-    <br>
-    <label for="skills">Skills Required</label>
-    <textarea name="skills" class="input"></textarea>
-    <br>
-    <input type="submit" name="submit">
-    <br>
-    </form>
+            <div class="container">
+                <h1><?php esc_html( get_admin_page_title() ); ?></h1>
+                <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
+                method="post">
+                    <label for="update" class="title-label">UPDATE</label>
+                    <br>
+                    <label for="volunteer-id">Volunteer ID</label>
+                    <input type="number" name="volunteer-id" class="input">
+                    <br>
+                    <label for="position-up">Position</label>
+                    <input type="text" name="position-up" class="input">
+                    <br>
+                    <label for="organization-up">Organization</label>
+                    <input type="text" name="organization-up" class="input">
+                    <br>
+                    <label for="type-up">Job Type</label>
+                    <select name="type-up" class="select">
+                        <option value="one-time">One-time</option>
+                        <option value="recurring">Recurring</option>
+                        <option value="seasonal">Seasonal</option>
+                    </select>
+                    <br>
+                    <label for="email-up">E-mail</label>
+                    <input type="email" name="email-up" class="input">
+                    <br>
+                    <label for="description-up">Description</label>
+                    <textarea name="description-up" class="input"></textarea>
+                    <br>
+                    <label for="location-up">Location</label>
+                    <input type="text" name="location-up" class="input">
+                    <br>
+                    <label for="hours-up">Hours</label>
+                    <input type="number" name="hours-up" class="input">
+                    <br>
+                    <label for="skills-up">Skills Required</label>
+                    <textarea name="skills-up" class="input"></textarea>
+                    <br>
+                    <input type="submit" name="submit-update" value="Update">
+                    <br>
+                </form>
+            </div>
+            
+            <div class="container">
+                <h1><?php esc_html( get_admin_page_title() ); ?></h1>
+                <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
+                method="post">
+                    <label for="update" class="title-label">DELETE</label>
+                    <br>
+                    <label for="delete-volunteer-id">Volunteer ID</label>
+                    <input type="number" name="delete-volunteer-id" class="input">
+                    <br>  
+                    <input type="submit" name="delete-button" value="Delete">
+                </form>
+            </div>
+        </div>
     </div>
-
     <div class="container">
-    <h1><?php esc_html( get_admin_page_title() ); ?></h1>
-    <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
-    method="post">
-    <label for="update" class="title-label">UPDATE</label>
-    <br>
-    <label for="volunteer-id">Volunteer ID</label>
-    <input type="number" name="volunteer-id" class="input">
-    <br>
-    <label for="position-up">Position</label>
-    <input type="text" name="position-up" class="input">
-    <br>
-    <label for="organization-up">Organization</label>
-    <input type="text" name="organization-up" class="input">
-    <br>
-    <label for="type-up">Job Type</label>
-    <select name="type-up" class="select">
-        <option value="one-time">One-time</option>
-        <option value="recurring">Recurring</option>
-        <option value="seasonal">Seasonal</option>
-    </select>
-    <br>
-    <label for="email-up">E-mail</label>
-    <input type="email" name="email-up" class="input">
-    <br>
-    <label for="description-up">Description</label>
-    <textarea name="description-up" class="input"></textarea>
-    <br>
-    <label for="location-up">Location</label>
-    <input type="text" name="location-up" class="input">
-    <br>
-    <label for="hours-up">Hours</label>
-    <input type="number" name="hours-up" class="input">
-    <br>
-    <label for="skills-up">Skills Required</label>
-    <textarea name="skills-up" class="input"></textarea>
-    <br>
-    <input type="submit" name="submit-update">
-    <br>
-    </form>
-    </div>
-    
-    <div class="container">
-    <h1><?php esc_html( get_admin_page_title() ); ?></h1>
-    <form action="<?php admin_url('options-general.php?page=volunteer/volunteer.php')?>"
-    method="post">
-    <label for="update" class="title-label">DELETE</label>
-    <br>
-    <label for="delete-volunteer-id">Volunteer ID</label>
-    <input type="number" name="delete-volunteer-id" class="input">
-    <br>  
-    <input type="submit" name="delete-button" value="Delete">
-    </div>
-
-    <div class="container">
-    <p><a href="<?php admin_url('options-
-    general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
-    action</a></p>
-    <p>POST array: <?php var_dump($_POST) ?></p>
-    <p>GET array: <?php var_dump($_GET) ?></p>
+        <p><a href="<?php admin_url('options-
+        general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
+        action</a></p>
+        <p>POST array: <?php var_dump($_POST) ?></p>
+        <p>GET array: <?php var_dump($_GET) ?></p>
     </div>
     <?php
 }
