@@ -50,8 +50,10 @@ function wporg_shortcode($atts = [], $content = null){
 
     $query_call = "SELECT * FROM VolunteerInfo WHERE 1=1";
     $params = array();
+    $parameter_check = false;
     foreach($atts as $attribute => $value){
         if(!empty($value)){
+            $parameter_check = true;
             if($attribute == 'hours'){
                 $query_call .= " AND $attribute <= %d";
             } else
@@ -67,7 +69,17 @@ function wporg_shortcode($atts = [], $content = null){
         $output = '<table>';
         $output .= '<tr><th>Volunteer ID</th><th>Position</th><th>Organization</th><th>Type</th><th>Email</th><th>Description</th><th>Location</th><th>Hours</th><th>Skills Required</th></tr>';
         foreach ($results as $row) {
-            $output .= '<tr>';
+            $color = "";
+            if(!$parameter_check){
+                if($row->Hours < 10){
+                    $color = "green";
+                }else if($row->Hours >= 10 && $row->Hours <=100){
+                    $color = "yellow";
+                }else if($row->Hours > 100){
+                    $color = "red";
+                }
+            }
+            $output .= '<tr style="background-color:'.$color.';">';
             $output .= '<td>' . esc_html($row->VolunteerID) . '</td>';
             $output .= '<td>' . esc_html($row->Position) . '</td>';
             $output .= '<td>' . esc_html($row->Organization) . '</td>';
@@ -82,8 +94,6 @@ function wporg_shortcode($atts = [], $content = null){
         $output .= '</table>';
 
         return $output;
-    } else {
-        return "No volunteers found.";
     }
 }
 add_shortcode('volunteer', 'wporg_shortcode');
