@@ -5,6 +5,9 @@
  * Author: Nicolas Chiasson
  */
 
+ /**
+  * Create a table in the volunteer database when the plugin is activated
+  */
 function myplugin_activate() {
     global $wpdb;
     $wpdb->query("CREATE TABLE VolunteerInfo (
@@ -22,14 +25,18 @@ function myplugin_activate() {
 }
 register_activation_hook( __FILE__, 'myplugin_activate' );
 
-
+/**
+ * Drop the table in the volunteer database when the plugin is deactivated
+ */
 function myplugin_deactivate() {
     global $wpdb;
     $wpdb->query("DELETE FROM VolunteerInfo;");
 }
 register_deactivation_hook( __FILE__, 'myplugin_deactivate' );    
     
-
+/**
+ * Add a shortcode to display the volunteer opportunities
+ */
 function wporg_shortcode($atts = [], $content = null){
     global $wpdb;
     $atts = shortcode_atts(
@@ -98,7 +105,9 @@ function wporg_shortcode($atts = [], $content = null){
 }
 add_shortcode('volunteer', 'wporg_shortcode');
 
-
+/**
+ * Add a form page to create, update, and delete volunteer opportunities
+ */
 function wp_volunteer_adminpage_html() {
     // check user capabilities
     if ( !current_user_can( 'manage_options' ) ) {
@@ -259,7 +268,9 @@ function wp_volunteer_adminpage_html() {
     </div>
     <?php
 }
-
+/**
+ * Handle the form submission, insert the data into the database
+ */
 function handle_form(){
     if(isset($_POST['submit'])){
         global $wpdb;
@@ -290,7 +301,9 @@ function handle_form(){
                               '$skills');");
     }
 }
-
+/**
+ * Handle the update form submission, update the data in the database
+ */
 function handle_update_form(){
     if(isset($_POST['submit-update'])){
         global $wpdb;
@@ -316,7 +329,9 @@ function handle_update_form(){
                       WHERE VolunteerID='$volunteerID';"); 
     }
 }
-
+/**
+ * Handle the delete form submission, delete the data from the database
+ */
 function handle_delete_form(){
     if(isset($_POST['delete-button'])){
         global $wpdb;
@@ -324,7 +339,9 @@ function handle_delete_form(){
         $wpdb->query("DELETE FROM VolunteerInfo WHERE VolunteerID='$volunteerID';");
     }
 }
-
+/**
+ * Add the admin page to the wordpress menu
+ */
 function wp_volunteer_adminpage() {
     add_menu_page(
     'Volunteer',
