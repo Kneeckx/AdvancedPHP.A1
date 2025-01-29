@@ -259,13 +259,6 @@ function wp_volunteer_adminpage_html() {
             </div>
         </div>
     </div>
-    <div class="container">
-        <p><a href="<?php admin_url('options-
-        general.php?page=volunteer/volunteer.php')?>?page=volunteer&amp;somekey=somevalue">my link
-        action</a></p>
-        <p>POST array: <?php var_dump($_POST) ?></p>
-        <p>GET array: <?php var_dump($_GET) ?></p>
-    </div>
     <?php
 }
 /**
